@@ -1,0 +1,16 @@
+{
+  "name": "spendstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A modern cross-platform personal finance application",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck"
+  },
+  "packageManager": "pnpm@10.19.0",
+  "devDependencies": {
+    "turbo": "^2.10.12"
+  }
+}
