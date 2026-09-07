@@ -28,15 +28,15 @@ Status: In Progress
 - [x] Configure pnpm
 - [x] Configure workspace
 - [x] Configure Turborepo
-- [ ] Rename project to SpendStack
-- [ ] Create shared packages
-- [ ] Create documentation
-- [ ] Create `.env.example`
-- [ ] Finalize root `.gitignore`
-- [ ] Verify typecheck
-- [ ] Verify build
-- [ ] Commit clean foundation
-- [ ] Push to GitHub
+- [x] Rename project to SpendStack
+- [x] Create shared packages
+- [x] Create documentation
+- [x] Create `.env.example`
+- [x] Finalize root `.gitignore`
+- [x] Verify typecheck
+- [x] Verify build
+- [x] Commit clean foundation
+- [x] Push to GitHub
 
 ## Web
 
