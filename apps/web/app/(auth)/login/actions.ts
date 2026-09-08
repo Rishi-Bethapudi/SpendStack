@@ -1,45 +1,34 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { loginSchema } from "@spendstack/validation";
-import { signIn } from "@/lib/auth/auth";
+import { signIn as signInUser } from "@/lib/auth/auth";
+import {
+  authError,
+  type AuthFormState,
+} from "@/lib/auth/form-state";
 
-export type LoginActionState = {
-  success: boolean;
-  error: string | null;
-};
-
-export const initialLoginState: LoginActionState = {
-  success: false,
-  error: null,
-};
-
-export async function loginAction(
-  _previousState: LoginActionState,
+export async function signIn(
+  _previousState: AuthFormState,
   formData: FormData,
-): Promise<LoginActionState> {
+): Promise<AuthFormState> {
   const result = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
 
   if (!result.success) {
-    return {
-      success: false,
-      error: result.error.issues[0]?.message ?? "Invalid input",
-    };
+    return authError(
+      "Please correct the errors below.",
+      result.error.flatten().fieldErrors,
+    );
   }
 
-  const response = await signIn(result.data);
+  const response = await signInUser(result.data);
 
   if (response.error) {
-    return {
-      success: false,
-      error: response.error,
-    };
+    return authError(response.error);
   }
 
-  return {
-    success: true,
-    error: null,
-  };
+  redirect("/dashboard");
 }

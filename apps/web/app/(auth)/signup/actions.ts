@@ -1,22 +1,17 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { signupSchema } from "@spendstack/validation";
-import { signUp } from "@/lib/auth/auth";
+import { signUp as signUpUser } from "@/lib/auth/auth";
+import {
+  authError,
+  type AuthFormState,
+} from "@/lib/auth/form-state";
 
-export type SignupActionState = {
-  success: boolean;
-  error: string | null;
-};
-
-export const initialSignupState: SignupActionState = {
-  success: false,
-  error: null,
-};
-
-export async function signupAction(
-  _previousState: SignupActionState,
+export async function signUp(
+  _previousState: AuthFormState,
   formData: FormData,
-): Promise<SignupActionState> {
+): Promise<AuthFormState> {
   const result = signupSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -24,23 +19,27 @@ export async function signupAction(
   });
 
   if (!result.success) {
-    return {
-      success: false,
-      error: result.error.issues[0]?.message ?? "Invalid input",
-    };
+    return authError(
+      "Please correct the errors below.",
+      result.error.flatten().fieldErrors,
+    );
   }
 
-  const response = await signUp(result.data);
+  const response = await signUpUser(result.data);
 
   if (response.error) {
+    return authError(response.error);
+  }
+
+  // Supabase returns a user without a session when email confirmation
+  // is required. Show the confirmation state instead of redirecting.
+  if (response.data?.user && !response.data.session) {
     return {
-      success: false,
-      error: response.error,
+      message: null,
+      fieldErrors: {},
+      status: "email_confirmation_required",
     };
   }
 
-  return {
-    success: true,
-    error: null,
-  };
+  redirect("/dashboard");
 }
